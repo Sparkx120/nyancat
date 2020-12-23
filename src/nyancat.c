@@ -371,7 +371,7 @@ int main(int argc, char ** argv) {
 		{"no-counter", no_argument,       0, 'n'},
 		{"no-title",   no_argument,       0, 's'},
 		{"no-clear",   no_argument,       0, 'e'},
-        {"timeout",    required_argument, 0, 'S'},
+		{"timeout",    required_argument, 0, 'S'},
 		{"delay",      required_argument, 0, 'd'},
 		{"frames",     required_argument, 0, 'f'},
 		{"min-rows",   required_argument, 0, 'r'},
@@ -417,9 +417,9 @@ int main(int argc, char ** argv) {
 			case 'n':
 				show_counter = 0;
 				break;
-            case 'S':
-		        countdown_clock = atoi(optarg);
-                break;
+			case 'S':
+				countdown_clock = atoi(optarg);
+				break;
 			case 'd':
 				if (10 <= atoi(optarg) && atoi(optarg) <= 1000)
 					delay_ms = atoi(optarg);
@@ -789,15 +789,15 @@ int main(int argc, char ** argv) {
 			newline(3);
 			printf("                             \033[1mNyancat Telnet Server\033[0m");
 			newline(2);
-            printf("                    hosted on \033[1;31mnyan.sparkx120.com\033[0m");
-            newline(1);
+			printf("                    hosted on \033[1;31mnyan.sparkx120.com\033[0m");
+			newline(1);
 			printf("                   written by \033[1;32mK. Lange\033[1;34m  @_klange\033[0m");
 			newline(1);
 			printf("                       run by \033[1;96mSparkX120\033[1;34m @SparkX120\033[0m");
-            if(frame_count != 0) {
-                newline(1);  
-                printf("                       max connection time is: %ds", frame_count*delay_ms/1000);
-            } 
+			if(frame_count != 0) {
+				newline(1);  
+				printf("                       max connection time is: %ds", frame_count*delay_ms/1000);
+			}
 			newline(2);
 			printf("        If things don't look right, try:");
 			newline(1);
