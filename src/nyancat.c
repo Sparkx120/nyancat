@@ -331,6 +331,7 @@ void usage(char * argv[]) {
 			"usage: %s [-hitn] [-f \033[3mframes\033[0m]\n"
 			"\n"
 			" -i --intro      \033[3mShow the introduction / about information at startup.\033[0m\n"
+            " -S --timeout    \033[3mTime in seconds to show intro\033[0m\n"
 			" -t --telnet     \033[3mTelnet mode.\033[0m\n"
 			" -n --no-counter \033[3mDo not display the timer\033[0m\n"
 			" -s --no-title   \033[3mDo not set the titlebar text\033[0m\n"
@@ -358,9 +359,9 @@ int main(int argc, char ** argv) {
 	unsigned short sb_len   = 0;
 
 	/* Whether or not to show the MOTD intro */
-	char show_intro = 0;
-	char skip_intro = 0;
-
+	char show_intro              = 0;
+	char skip_intro              = 0;
+    unsigned int countdown_clock = 5;
 	/* Long option names */
 	static struct option long_opts[] = {
 		{"help",       no_argument,       0, 'h'},
@@ -370,6 +371,7 @@ int main(int argc, char ** argv) {
 		{"no-counter", no_argument,       0, 'n'},
 		{"no-title",   no_argument,       0, 's'},
 		{"no-clear",   no_argument,       0, 'e'},
+        {"timeout",    required_argument, 0, 'S'},
 		{"delay",      required_argument, 0, 'd'},
 		{"frames",     required_argument, 0, 'f'},
 		{"min-rows",   required_argument, 0, 'r'},
@@ -386,7 +388,7 @@ int main(int argc, char ** argv) {
 
 	/* Process arguments */
 	int index, c;
-	while ((c = getopt_long(argc, argv, "eshiItnd:f:r:R:c:C:W:H:", long_opts, &index)) != -1) {
+	while ((c = getopt_long(argc, argv, "eshiItnS:d:f:r:R:c:C:W:H:", long_opts, &index)) != -1) {
 		if (!c) {
 			if (long_opts[index].flag == 0) {
 				c = long_opts[index].val;
@@ -415,6 +417,9 @@ int main(int argc, char ** argv) {
 			case 'n':
 				show_counter = 0;
 				break;
+            case 'S':
+		        countdown_clock = atoi(optarg);
+                break;
 			case 'd':
 				if (10 <= atoi(optarg) && atoi(optarg) <= 1000)
 					delay_ms = atoi(optarg);
@@ -602,6 +607,8 @@ int main(int argc, char ** argv) {
 			ttype = 5; /* Extended ASCII fallback == Windows */
 		} else if (strstr(term, "vt220")) {
 			ttype = 6; /* No color support */
+        } else if (strstr(term, "dec-vt05")) {
+			ttype = 6; /* No color support */
 		} else if (strstr(term, "fallback")) {
 			ttype = 4; /* Unicode fallback */
 		} else if (strstr(term, "rxvt-256color")) {
@@ -778,12 +785,19 @@ int main(int argc, char ** argv) {
 
 	if (show_intro) {
 		/* Display the MOTD */
-		unsigned int countdown_clock = 5;
 		for (k = 0; k < countdown_clock; ++k) {
 			newline(3);
 			printf("                             \033[1mNyancat Telnet Server\033[0m");
 			newline(2);
-			printf("                   written and run by \033[1;32mK. Lange\033[1;34m @_klange\033[0m");
+            printf("                    hosted on \033[1;31mnyan.sparkx120.com\033[0m");
+            newline(1);
+			printf("                   written by \033[1;32mK. Lange\033[1;34m  @_klange\033[0m");
+			newline(1);
+			printf("                       run by \033[1;96mSparkX120\033[1;34m @SparkX120\033[0m");
+            if(frame_count != 0) {
+                newline(1);  
+                printf("                       max connection time is: %ds", frame_count*delay_ms/1000);
+            } 
 			newline(2);
 			printf("        If things don't look right, try:");
 			newline(1);
@@ -804,7 +818,7 @@ int main(int argc, char ** argv) {
 			printf("        Starting in %d...                \n", countdown_clock-k);
 
 			fflush(stdout);
-			usleep(400000);
+			usleep(1000000);
 			if (clear_screen) {
 				printf("\033[H"); /* Reset cursor */
 			} else {

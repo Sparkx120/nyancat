@@ -1,0 +1,12 @@
+service telnet
+{
+	disable = no
+	flags = REUSE
+	socket_type = stream
+	wait = no
+	user = nyan
+	server = /usr/bin/nyancat-server
+	server_args = -t -d 80 -f 5000
+	log_on_failure += USERID
+	disable = yes
+}
